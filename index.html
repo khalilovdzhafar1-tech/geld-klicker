@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>💰 Geld-Klicker</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#102c24,#176b46);
+  color: white;
+  text-align: center;
+}
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 25px;
+}
+h1 { color: #8cffb0; }
+.money { font-size: 42px; margin: 20px; }
+button {
+  border: 0;
+  border-radius: 14px;
+  padding: 15px 22px;
+  margin: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.click {
+  background: #25d366;
+  color: #073b20;
+  font-size: 26px;
+  padding: 28px;
+  width: 90%;
+}
+.upgrade {
+  background: #f5c542;
+  color: #302300;
+  width: 90%;
+}
+.panel {
+  background: #ffffff18;
+  padding: 18px;
+  border-radius: 18px;
+  margin: 18px 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>💰 GELD-KLICKER</h1>
+<p>Werde zum Millionär!</p>
+
+<div class="panel">
+  <p>DEIN KONTOSTAND</p>
+  <div class="money" id="money">0 €</div>
+  <p id="stats">Pro Klick: 1 € | Pro Sekunde: 0 €</p>
+</div>
+
+<button class="click" onclick="earn()">💵 GELD KLICKEN!</button>
+
+<div class="panel">
+<h2>🛒 UPGRADES</h2>
+<button class="upgrade" onclick="buyClick()">
+  👆 Besserer Klick<br>Preis: <span id="clickCost">25</span> €
+</button>
+<button class="upgrade" onclick="buyAuto()">
+  🏭 Geldmaschine<br>Preis: <span id="autoCost">50</span> €
+</button>
+</div>
+
+<p id="message">Klicke und werde reich!</p>
+<button onclick="resetGame()">🔄 Neu starten</button>
+</div>
+
+<script>
+let money = Number(localStorage.getItem("money")) || 0;
+let perClick = Number(localStorage.getItem("perClick")) || 1;
+let auto = Number(localStorage.getItem("auto")) || 0;
+let clickLevel = Number(localStorage.getItem("clickLevel")) || 0;
+let autoLevel = Number(localStorage.getItem("autoLevel")) || 0;
+
+function save() {
+  localStorage.setItem("money", money);
+  localStorage.setItem("perClick", perClick);
+  localStorage.setItem("auto", auto);
+  localStorage.setItem("clickLevel", clickLevel);
+  localStorage.setItem("autoLevel", autoLevel);
+}
+
+function update() {
+  document.getElementById("money").textContent =
+    Math.floor(money).toLocaleString("de-DE") + " €";
+  document.getElementById("stats").textContent =
+    "Pro Klick: " + perClick + " € | Pro Sekunde: " + auto + " €";
+  document.getElementById("clickCost").textContent =
+    25 + clickLevel * 30;
+  document.getElementById("autoCost").textContent =
+    50 + autoLevel * 50;
+  save();
+}
+
+function earn() {
+  money += perClick;
+  document.getElementById("message").textContent =
+    "+" + perClick + " € verdient!";
+  update();
+}
+
+function buyClick() {
+  let cost = 25 + clickLevel * 30;
+  if (money >= cost) {
+    money -= cost;
+    perClick++;
+    clickLevel++;
+    update();
+  } else {
+    document.getElementById("message").textContent =
+      "Du hast nicht genug Geld!";
+  }
+}
+
+function buyAuto() {
+  let cost = 50 + autoLevel * 50;
+  if (money >= cost) {
+    money -= cost;
+    auto++;
+    autoLevel++;
+    update();
+  } else {
+    document.getElementById("message").textContent =
+      "Du hast nicht genug Geld!";
+  }
+}
+
+function resetGame() {
+  if (confirm("Wirklich neu anfangen?")) {
+    money = 0;
+    perClick = 1;
+    auto = 0;
+    clickLevel = 0;
+    autoLevel = 0;
+    update();
+  }
+}
+
+setInterval(function() {
+  money += auto;
+  update();
+}, 1000);
+
+update();
+</script>
+</body>
+</html>
