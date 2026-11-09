@@ -3,222 +3,652 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Money Clicker</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Money Clicker Ultimate</title>
 <style>
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:linear-gradient(135deg,#101827,#172b40);
-  color:white;
-  font-family:Arial,sans-serif;
-  text-align:center;
-  padding:20px;
+:root {
+ --bg:#090d17;--panel:#141c2d;--panel2:#1b2940;
+ --green:#39e99a;--gold:#ffd166;--purple:#a78bfa;
+ --text:#f4f7ff;--muted:#9aaac2;--border:#293750;
 }
-h1 { color:#ffd700; }
-.panel {
-  max-width:600px;
-  margin:15px auto;
-  padding:20px;
-  background:#203449;
-  border-radius:18px;
-  box-shadow:0 5px 20px #0005;
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Inter,Arial,sans-serif;
 }
-.money {
-  color:#4cff9b;
-  font-size:38px;
-  font-weight:bold;
+header{
+ padding:22px;text-align:center;
+ background:linear-gradient(120deg,#101c30,#172a40);
+ border-bottom:1px solid var(--border);
 }
-button {
-  border:0;
-  border-radius:12px;
-  padding:13px 18px;
-  margin:6px;
-  cursor:pointer;
-  font-weight:bold;
-  background:#ffc928;
-  color:#202020;
+header h1{margin:0;color:var(--green);font-size:30px}
+header p{color:var(--muted);margin:8px 0 0}
+nav{
+ display:flex;justify-content:center;flex-wrap:wrap;
+ gap:8px;padding:14px;background:#0e1523;
+ position:sticky;top:0;z-index:5;
 }
-button:hover { transform:scale(1.04); }
-#click {
-  font-size:24px;
-  padding:25px 45px;
-  background:#24d878;
+nav button{
+ background:var(--panel2);color:white;
+ border:1px solid var(--border);padding:11px 15px;
+ border-radius:10px;cursor:pointer;
 }
-.upgrade {
-  background:#304d66;
-  border-radius:12px;
-  padding:12px;
-  margin:10px 0;
+nav button.active{background:var(--green);color:#07150e}
+button{font:inherit}
+main{max-width:1100px;margin:auto;padding:18px}
+.page{display:none}
+.page.active{display:block}
+.panel{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:17px;padding:20px;margin-bottom:17px;
 }
-.upgrade button { background:#45d99a; }
-table {
-  width:100%;
-  border-collapse:collapse;
+.stats{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:10px;margin-bottom:15px;
 }
-td,th {
-  padding:10px;
-  border-bottom:1px solid #ffffff30;
+.stat{
+ background:var(--panel2);border-radius:13px;padding:15px;
+ text-align:center;
 }
-small { color:#b9c8d8; }
+.stat strong{display:block;color:var(--green);font-size:20px;margin-top:7px}
+.label{color:var(--muted);font-size:12px}
+.money{
+ font-size:clamp(34px,7vw,58px);font-weight:900;
+ color:var(--green);margin:15px 0;
+ text-shadow:0 0 25px #39e99a35;
+}
+.click-area{text-align:center;padding:20px 5px}
+#clickButton{
+ width:min(230px,70vw);height:min(230px,70vw);
+ border-radius:50%;border:7px solid #ffffff20;
+ background:radial-gradient(circle at 35% 25%,#76ffc1,#12a96d);
+ color:#062b1b;font-size:55px;font-weight:900;
+ box-shadow:0 0 45px #39e99a35;
+ cursor:pointer;transition:.12s;
+}
+#clickButton:active{transform:scale(.92)}
+.primary,.buy,.smallbtn{
+ background:var(--green);color:#07150e;
+ border:0;border-radius:10px;padding:11px 15px;
+ font-weight:800;cursor:pointer;
+}
+.buy:disabled,.primary:disabled{opacity:.35;cursor:not-allowed}
+.grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:12px;
+}
+.item{
+ background:var(--panel2);border:1px solid var(--border);
+ padding:15px;border-radius:13px;
+}
+.item h3{margin:0 0 8px}
+.item p{color:var(--muted);font-size:13px;line-height:1.5}
+.item button{width:100%;margin-top:10px}
+.gold{color:var(--gold)}
+.purple{color:var(--purple)}
+.green{color:var(--green)}
+.muted{color:var(--muted)}
+.progress{
+ height:9px;background:#080e18;border-radius:20px;
+ overflow:hidden;margin:10px 0;
+}
+.progress div{height:100%;background:var(--green);transition:.2s}
+h2{margin-top:0}
+h3{font-size:16px}
+.notice{color:var(--muted);font-size:13px;line-height:1.6}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{
+ display:inline-block;background:#253e36;color:var(--green);
+ padding:5px 9px;border-radius:20px;font-size:11px;
+}
+table{width:100%;border-collapse:collapse}
+td,th{padding:12px 8px;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-size:12px}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:12px}
+#toast{
+ position:fixed;bottom:20px;left:50%;
+ transform:translateX(-50%);
+ background:#203b31;color:white;padding:13px 20px;
+ border-radius:12px;display:none;z-index:20;
+ box-shadow:0 5px 25px #0008;
+}
+#floatLayer{position:fixed;inset:0;pointer-events:none;z-index:10}
+.float{
+ position:absolute;color:var(--gold);font-size:24px;
+ font-weight:bold;animation:up .8s forwards;
+}
+@keyframes up{
+ from{opacity:1;transform:translateY(0)}
+ to{opacity:0;transform:translateY(-100px)}
+}
+@media(max-width:550px){
+ main{padding:10px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .panel{padding:14px}
+ nav{gap:5px}
+ nav button{padding:9px;font-size:12px}
+}
 </style>
 </head>
 <body>
 
-<h1>💰 MONEY CLICKER</h1>
+<header>
+ <h1>💰 MONEY CLICKER</h1>
+ <p>Build your empire. Become a billionaire.</p>
+</header>
 
-<div class="panel">
+<nav id="nav">
+ <button class="active" data-page="home">🏠 Home</button>
+ <button data-page="upgrades">🚀 Upgrades</button>
+ <button data-page="pets">🐾 Pets</button>
+ <button data-page="worlds">🌍 Worlds</button>
+ <button data-page="quests">🎯 Quests</button>
+ <button data-page="rewards">🎁 Rewards</button>
+ <button data-page="leaderboard">🏆 Ranking</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+ <div class="stats">
+  <div class="stat">Level<strong id="level">1</strong></div>
+  <div class="stat">Per Klick<strong id="perClick">1</strong></div>
+  <div class="stat">Pro Sekunde<strong id="perSecond">0</strong></div>
+  <div class="stat">Prestige<strong id="prestige">0</strong></div>
+  <div class="stat">Diamanten<strong id="gems">0</strong></div>
+  <div class="stat">Multiplikator<strong id="multiplier">x1</strong></div>
+ </div>
+
+ <div class="panel click-area">
+  <div class="label">DEIN VERMÖGEN</div>
   <div class="money" id="money">$0</div>
-  <p>Level: <span id="level">1</span></p>
-  <p>Geld pro Klick: <span id="power">1</span></p>
-  <p>Auto-Geld pro Sekunde: <span id="auto">0</span></p>
-  <button id="click" onclick="earn()">💵 GELD KLICKEN</button>
-</div>
+  <button id="clickButton">💰</button>
+  <p class="muted">Klicke, um Geld zu verdienen!</p>
+  <p class="gold" id="clickInfo">Bereit zum Klicken?</p>
+ </div>
 
-<div class="panel">
-  <h2>🚀 UPGRADES</h2>
-  <div id="upgrades"></div>
-</div>
+ <div class="panel">
+  <div class="row">
+   <h2>📈 Level-Fortschritt</h2>
+   <span id="levelText" class="green">Level 1</span>
+  </div>
+  <div class="progress"><div id="levelBar"></div></div>
+  <p class="notice" id="levelProgress"></p>
+ </div>
 
-<div class="panel">
-  <h2>🏆 RANGLISTE</h2>
+ <div class="panel">
+  <h2>⭐ Aktive Boni</h2>
+  <p id="bonusInfo" class="notice"></p>
+ </div>
+
+ <div class="panel">
+  <h2>🔄 Prestige</h2>
+  <p class="notice">Setze dein Geld und deine Upgrades zurück und erhalte Diamanten für einen permanenten Bonus.</p>
+  <p>Benötigt: <b class="gold">$1.000.000</b></p>
+  <button class="primary" onclick="prestigeNow()">Prestige durchführen</button>
+ </div>
+</section>
+
+<section id="upgrades" class="page">
+ <div class="panel">
+  <h2>🚀 Upgrade-Shop</h2>
+  <p class="notice">Verbessere deine Klickkraft und deine automatische Geldproduktion.</p>
+  <div class="grid" id="upgradeList"></div>
+ </div>
+</section>
+
+<section id="pets" class="page">
+ <div class="panel">
+  <h2>🐾 Haustier-Shop</h2>
+  <p class="notice">Pets geben dir permanente Einkommensboni. Kaufe sie und wähle dein aktives Haustier.</p>
+  <div class="grid" id="petList"></div>
+ </div>
+</section>
+
+<section id="worlds" class="page">
+ <div class="panel">
+  <h2>🌍 Deine Welten</h2>
+  <p class="notice">Schalte neue Welten frei. Jede Welt erhöht deine Einnahmen.</p>
+  <div class="grid" id="worldList"></div>
+ </div>
+</section>
+
+<section id="quests" class="page">
+ <div class="panel">
+  <h2>🎯 Missionen</h2>
+  <p class="notice">Erledige Missionen und kassiere Bonusgeld und Diamanten.</p>
+  <div class="grid" id="questList"></div>
+ </div>
+ <div class="panel">
+  <h2>🏅 Achievements</h2>
+  <div class="grid" id="achievementList"></div>
+ </div>
+</section>
+
+<section id="rewards" class="page">
+ <div class="panel">
+  <h2>🎁 Tägliche Belohnung</h2>
+  <p class="notice">Komme jeden Tag zurück und hole dir deine Belohnung.</p>
+  <h2 class="gold">🎁 5.000 Geld + 2 Diamanten</h2>
+  <button class="primary" id="dailyButton" onclick="dailyReward()">Belohnung abholen</button>
+  <p id="dailyInfo" class="muted"></p>
+ </div>
+
+ <div class="panel">
+  <h2>🎡 Glücksrad</h2>
+  <p class="notice">Einmal alle 24 Stunden drehen und einen zufälligen Preis gewinnen.</p>
+  <div style="font-size:75px;margin:15px">🎡</div>
+  <button class="primary" id="wheelButton" onclick="spinWheel()">Glücksrad drehen</button>
+  <h3 id="wheelResult" class="gold"></h3>
+ </div>
+</section>
+
+<section id="leaderboard" class="page">
+ <div class="panel">
+  <h2>🏆 Rangliste</h2>
+  <p class="notice">Lokale Rangliste dieses Browsers. Für eine globale Rangliste mit echten Spielern ist ein Server erforderlich.</p>
   <table>
-    <thead><tr><th>Platz</th><th>Spieler</th><th>Vermögen</th></tr></thead>
-    <tbody id="ranking"></tbody>
+   <thead><tr><th>Platz</th><th>Spieler</th><th>Vermögen</th></tr></thead>
+   <tbody id="ranking"></tbody>
   </table>
-  <small>Lokale Demo-Rangliste – noch nicht global.</small>
-</div>
+  <button class="primary" onclick="editName()">Spielername ändern</button>
+ </div>
+</section>
+</main>
 
-<div class="panel">
-  <h2>🌟 REBIRTH</h2>
-  <p>Starte neu und erhalte einen permanenten Multiplikator!</p>
-  <p>Rebirth: <span id="rebirth">0</span></p>
-  <button onclick="doRebirth()">REBIRTH (1 Million)</button>
-</div>
+<footer>Money Clicker Ultimate · Dein Weg zum Reichtum 💎</footer>
+<div id="toast"></div>
+<div id="floatLayer"></div>
 
 <script>
-let money = 0;
-let total = 0;
-let power = 1;
-let auto = 0;
-let level = 1;
-let rebirth = 0;
-let multiplier = 1;
+const $ = id => document.getElementById(id);
+const SAVE_KEY = "moneyClickerUltimateV1";
+
+const defaultState = {
+ money:0,total:0,power:1,auto:0,mult:1,
+ prestige:0,gems:0,level:1,name:"Du",
+ ownedPets:[],activePet:-1,world:0,
+ bought:{},achievements:[],questsDone:[],
+ daily:0,wheel:0,lastDate:"",clicks:0
+};
+
+let s;
+try {
+ s = {...defaultState,...JSON.parse(localStorage.getItem(SAVE_KEY)||"{}")};
+} catch(e) {
+ s = {...defaultState};
+}
+s.bought ||= {};
+s.ownedPets ||= [];
+s.achievements ||= [];
+s.questsDone ||= [];
+s.gems ||= 0;
 
 const upgrades = [
-  {name:"🥉 Bronze-Klicker", cost:25, type:"power", value:1},
-  {name:"🥈 Silber-Klicker", cost:150, type:"power", value:5},
-  {name:"🥇 Gold-Klicker", cost:800, type:"power", value:20},
-  {name:"💎 Diamant-Klicker", cost:5000, type:"power", value:100},
-  {name:"🤖 Auto-Klicker", cost:100, type:"auto", value:1},
-  {name:"⚙️ Mega-Auto-Klicker", cost:1500, type:"auto", value:10},
-  {name:"🏭 Geld-Fabrik", cost:10000, type:"auto", value:75},
-  {name:"🚀 Super-Fabrik", cost:100000, type:"auto", value:500},
-  {name:"👑 Klick-Multiplikator", cost:2500, type:"mult", value:2},
-  {name:"🌌 Ultra-Multiplikator", cost:25000, type:"mult", value:3}
+ ["👆","Stärkerer Finger","power",1,25],
+ ["💪","Muskel-Klicker","power",5,150],
+ ["🥇","Goldener Finger","power",25,750],
+ ["💎","Diamant-Finger","power",100,4000],
+ ["⚡","Blitz-Klicker","power",500,20000],
+ ["🔥","Feuer-Klicker","power",2500,100000],
+ ["👑","Königlicher Klicker","power",10000,500000],
+ ["🌌","Kosmischer Klicker","power",50000,2500000],
+ ["🤖","Auto-Klicker","auto",1,100],
+ ["⚙️","Doppel-Automat","auto",5,600],
+ ["🏭","Geld-Fabrik","auto",25,3000],
+ ["🚗","Geld-Maschine","auto",100,15000],
+ ["🏢","Mega-Unternehmen","auto",500,75000],
+ ["🌆","Finanz-Imperium","auto",2500,400000],
+ ["🚀","Weltraum-Fabrik","auto",10000,2000000],
+ ["🌍","Welt-Konzern","auto",50000,10000000],
+ ["✨","Kleiner Multiplikator","mult",0.25,2000],
+ ["🌟","Gold-Multiplikator","mult",0.5,10000],
+ ["💫","Super-Multiplikator","mult",1,50000],
+ ["🔮","Magischer Multiplikator","mult",2,250000],
+ ["👑","Königs-Multiplikator","mult",5,1500000],
+ ["🌠","Galaxie-Multiplikator","mult",10,8000000],
+ ["🧲","Geld-Magnet","mult",0.5,15000],
+ ["💰","Geld-Zauber","mult",3,300000],
+ ["🏦","Investmentbank","auto",100000,50000000],
+ ["🛸","Alien-Fabrik","auto",500000,250000000],
+ ["☄️","Meteor-Klicker","power",250000,100000000],
+ ["♾️","Unendlichkeits-Finger","power",1000000,500000000],
+ ["💻","KI-Unternehmen","auto",2500000,1000000000],
+ ["🌈","Regenbogen-Fabrik","auto",10000000,5000000000]
 ];
 
-let costs = upgrades.map(u => u.cost);
-let bought = upgrades.map(() => 0);
+const pets = [
+ {name:"🐶 Hund",cost:5000,bonus:0.10,desc:"+10% Einkommen"},
+ {name:"🐱 Katze",cost:25000,bonus:0.20,desc:"+20% Einkommen"},
+ {name:"🐲 Drache",cost:150000,bonus:0.50,desc:"+50% Einkommen"},
+ {name:"🦄 Einhorn",cost:1000000,bonus:1,desc:"+100% Einkommen"},
+ {name:"👾 Alien",cost:10000000,bonus:2,desc:"+200% Einkommen"},
+ {name:"🐉 Goldener Drache",cost:100000000,bonus:5,desc:"+500% Einkommen"}
+];
 
+const worlds = [
+ {name:"🌳 Anfänger-Welt",cost:0,mult:1,desc:"Deine erste Welt"},
+ {name:"🏙️ Millionärs-Stadt",cost:100000,mult:2,desc:"Doppelte Einnahmen"},
+ {name:"🌌 Space-Welt",cost:10000000,mult:5,desc:"Fünffache Einnahmen"},
+ {name:"👑 Götter-Welt",cost:1000000000,mult:10,desc:"Zehnfache Einnahmen"}
+];
+
+const quests = [
+ {name:"Erster Klick",desc:"Klicke 10-mal",goal:10,type:"clicks",reward:500},
+ {name:"Kleiner Sparer",desc:"Verdiene 10.000 Geld",goal:10000,type:"total",reward:2000},
+ {name:"Klick-Meister",desc:"Klicke 100-mal",goal:100,type:"clicks",reward:5000},
+ {name:"Geschäftsmann",desc:"Verdiene 100.000 Geld",goal:100000,type:"total",reward:10000},
+ {name:"Millionär",desc:"Erreiche 1 Million Gesamtverdienst",goal:1000000,type:"total",reward:50000},
+ {name:"Fleißiger Investor",desc:"Kaufe 10 Upgrades",goal:10,type:"upgrades",reward:25000}
+];
+
+const achievements = [
+ {name:"👶 Anfänger",desc:"Erreiche 100 Gesamtgeld",goal:100,type:"total",reward:100},
+ {name:"💵 Sparer",desc:"Erreiche 10.000 Gesamtgeld",goal:10000,type:"total",reward:1000},
+ {name:"💎 Millionär",desc:"Erreiche 1 Million Gesamtgeld",goal:1000000,type:"total",reward:10000},
+ {name:"👆 Klick-Profi",desc:"Mache 100 Klicks",goal:100,type:"clicks",reward:1000},
+ {name:"🚀 Upgrade-Fan",desc:"Kaufe 10 Upgrades",goal:10,type:"upgrades",reward:5000},
+ {name:"🐾 Tierfreund",desc:"Besitze ein Pet",goal:1,type:"pets",reward:5000},
+ {name:"🌍 Weltenbummler",desc:"Schalte eine neue Welt frei",goal:1,type:"worlds",reward:10000}
+];
+
+function fmt(n) {
+ if(n>=1e12)return (n/1e12).toFixed(2)+"T";
+ if(n>=1e9)return (n/1e9).toFixed(2)+"B";
+ if(n>=1e6)return (n/1e6).toFixed(2)+"M";
+ if(n>=1e3)return (n/1e3).toFixed(2)+"K";
+ return Math.floor(n).toLocaleString("de-DE");
+}
+function save() {
+ localStorage.setItem(SAVE_KEY,JSON.stringify(s));
+}
+function toast(message) {
+ $("toast").textContent=message;
+ $("toast").style.display="block";
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>$("toast").style.display="none",2200);
+}
+function petBonus() {
+ return s.activePet>=0 && pets[s.activePet]
+ ? pets[s.activePet].bonus : 0;
+}
+function worldBonus() {
+ return worlds[s.world].mult;
+}
+function totalMultiplier() {
+ return (1+s.prestige*0.5+petBonus())*worldBonus();
+}
+function clickValue() {
+ return s.power*s.mult*totalMultiplier();
+}
+function autoValue() {
+ return s.auto*s.mult*totalMultiplier();
+}
+function addMoney(amount) {
+ s.money+=amount;
+ s.total+=amount;
+}
+function floatText(text) {
+ const el=document.createElement("div");
+ el.className="float";
+ el.textContent=text;
+ el.style.left=(40+Math.random()*20)+"%";
+ el.style.top="45%";
+ $("floatLayer").appendChild(el);
+ setTimeout(()=>el.remove(),850);
+}
 function earn() {
-  let amount = power * multiplier;
-  money += amount;
-  total += amount;
-  update();
+ let critical=Math.random()<0.05;
+ let amount=clickValue()*(critical?10:1);
+ addMoney(amount);
+ s.clicks++;
+ floatText("+"+fmt(amount)+(critical?" CRIT!":""));
+ if(critical)toast("🔥 KRITISCHER TREFFER! 10x Geld!");
+ update();
 }
+$("clickButton").addEventListener("click",earn);
 
-function buy(i) {
-  let u = upgrades[i];
-  if(money < costs[i]) return;
-
-  money -= costs[i];
-  bought[i]++;
-
-  if(u.type === "power") power += u.value;
-  if(u.type === "auto") auto += u.value;
-  if(u.type === "mult") multiplier *= u.value;
-
-  costs[i] = Math.floor(costs[i] * 1.6);
-  update();
+function upgradeCost(i) {
+ return Math.floor(upgrades[i][4]*Math.pow(1.55,s.bought[i]||0));
 }
+function buyUpgrade(i) {
+ const u=upgrades[i],cost=upgradeCost(i);
+ if(s.money<cost)return toast("Nicht genug Geld!");
+ s.money-=cost;
+ s.bought[i]=(s.bought[i]||0)+1;
+ if(u[2]==="power")s.power+=u[3];
+ if(u[2]==="auto")s.auto+=u[3];
+ if(u[2]==="mult")s.mult+=u[3];
+ toast("Upgrade gekauft: "+u[1]);
+ update();
+}
+function renderUpgrades() {
+ $("upgradeList").innerHTML=upgrades.map((u,i)=>{
+ const cost=upgradeCost(i);
+ return `<div class="item">
+ <h3>${u[0]} ${u[1]}</h3>
+ <p>${u[2]==="power"?"+"+fmt(u[3])+" Geld pro Klick":
+ u[2]==="auto"?"+"+fmt(u[3])+" Geld pro Sekunde":
+ "+"+u[3]+" Multiplikator"}</p>
+ <span class="badge">Besitzt: ${s.bought[i]||0}</span>
+ <button class="buy" ${s.money<cost?"disabled":""} onclick="buyUpgrade(${i})">
+ Kaufen · $${fmt(cost)}
+ </button></div>`;
+ }).join("");
+}
+function buyPet(i) {
+ if(s.ownedPets.includes(i)) {
+  s.activePet=i;toast("Pet ausgerüstet!");
+ } else {
+  if(s.money<pets[i].cost)return toast("Nicht genug Geld!");
+  s.money-=pets[i].cost;
+  s.ownedPets.push(i);
+  s.activePet=i;
+  toast("Neues Pet freigeschaltet!");
+ }
+ update();
+}
+function renderPets() {
+ $("petList").innerHTML=pets.map((p,i)=>{
+ const owned=s.ownedPets.includes(i);
+ return `<div class="item">
+ <h3>${p.name}</h3><p>${p.desc}</p>
+ <button class="buy" ${!owned&&s.money<p.cost?"disabled":""}
+ onclick="buyPet(${i})">
+ ${owned?(s.activePet===i?"Ausgerüstet ✓":"Ausrüsten"):"Kaufen · $"+fmt(p.cost)}
+ </button></div>`;
+ }).join("");
+}
+function buyWorld(i) {
+ if(i<=s.world)return toast("Diese Welt ist bereits freigeschaltet!");
+ if(i!==s.world+1)return toast("Schalte zuerst die vorherige Welt frei!");
+ if(s.total<worlds[i].cost)return toast("Du brauchst mehr Gesamtverdienst!");
+ s.world=i;
+ toast("Neue Welt freigeschaltet! 🌍");
+ update();
+}
+function renderWorlds() {
+ $("worldList").innerHTML=worlds.map((w,i)=>{
+ const active=s.world===i,unlocked=i<s.world;
+ return `<div class="item">
+ <h3>${w.name}</h3><p>${w.desc}</p>
+ <p class="gold">Multiplikator: x${w.mult}</p>
+ <button class="buy" ${active||unlocked?"disabled":""}
+ onclick="buyWorld(${i})">
+ ${active?"Aktive Welt ✓":unlocked?"Freigeschaltet":"Freischalten · $"+fmt(w.cost)}
+ </button></div>`;
+ }).join("");
+}
+function questValue(q) {
+ if(q.type==="clicks")return s.clicks;
+ if(q.type==="total")return s.total;
+ if(q.type==="upgrades")return Object.values(s.bought).reduce((a,b)=>a+b,0);
+ return 0;
+}
+function claimQuest(i) {
+ const q=quests[i];
+ if(s.questsDone.includes(i)||questValue(q)<q.goal)return;
+ s.questsDone.push(i);
+ addMoney(q.reward);
+ toast("Mission abgeschlossen! +$"+fmt(q.reward));
+ update();
+}
+function renderQuests() {
+ $("questList").innerHTML=quests.map((q,i)=>{
+ const value=questValue(q),done=s.questsDone.includes(i);
+ const pct=Math.min(100,value/q.goal*100);
+ return `<div class="item">
+ <h3>${q.name}</h3><p>${q.desc}</p>
+ <div class="progress"><div style="width:${pct}%"></div></div>
+ <p>${fmt(value)} / ${fmt(q.goal)}</p>
+ <button class="buy" ${done||value<q.goal?"disabled":""}
+ onclick="claimQuest(${i})">${done?"Erledigt ✓":"Belohnung: $"+fmt(q.reward)}</button>
+ </div>`;
+ }).join("");
 
-function doRebirth() {
-  if(money < 1000000) {
-    alert("Du brauchst 1 Million Dollar!");
-    return;
+ $("achievementList").innerHTML=achievements.map((a,i)=>{
+ let val=0;
+ if(a.type==="total")val=s.total;
+ if(a.type==="clicks")val=s.clicks;
+ if(a.type==="upgrades")val=Object.values(s.bought).reduce((x,y)=>x+y,0);
+ if(a.type==="pets")val=s.ownedPets.length;
+ if(a.type==="worlds")val=s.world;
+ const done=s.achievements.includes(i);
+ return `<div class="item">
+ <h3>${a.name}</h3><p>${a.desc}</p>
+ <span class="badge">${done?"Freigeschaltet ✓":"Belohnung: $"+fmt(a.reward)}</span>
+ </div>`;
+ }).join("");
+}
+function checkAchievements() {
+ achievements.forEach((a,i)=>{
+  if(s.achievements.includes(i))return;
+  let val=0;
+  if(a.type==="total")val=s.total;
+  if(a.type==="clicks")val=s.clicks;
+  if(a.type==="upgrades")val=Object.values(s.bought).reduce((x,y)=>x+y,0);
+  if(a.type==="pets")val=s.ownedPets.length;
+  if(a.type==="worlds")val=s.world;
+  if(val>=a.goal) {
+   s.achievements.push(i);
+   addMoney(a.reward);
+   toast("🏆 Achievement: "+a.name+" +$"+fmt(a.reward));
   }
-
-  money = 0;
-  power = 1;
-  auto = 0;
-  multiplier = 1;
-  bought = upgrades.map(() => 0);
-  costs = upgrades.map(u => u.cost);
-  rebirth++;
-  multiplier = 1 + rebirth;
-  update();
+ });
 }
-
+function prestigeNow() {
+ if(s.money<1000000)return toast("Du brauchst 1 Million Geld!");
+ const reward=Math.max(1,Math.floor(s.money/1000000));
+ if(!confirm("Prestige starten? Du erhältst "+reward+" Diamanten. Dein Geld und deine Upgrades werden zurückgesetzt."))return;
+ s.gems+=reward;
+ s.prestige++;
+ s.money=0;s.power=1;s.auto=0;s.mult=1;
+ s.bought={};s.ownedPets=[];s.activePet=-1;s.world=0;
+ toast("Prestige erfolgreich! 💎");
+ update();
+}
+function dailyReward() {
+ const now=Date.now();
+ if(now-s.daily<86400000)return toast("Morgen gibt es eine neue Belohnung!");
+ s.daily=now;
+ addMoney(5000*(s.prestige+1));
+ s.gems+=2;
+ toast("🎁 5.000 Geld und 2 Diamanten erhalten!");
+ update();
+}
+function spinWheel() {
+ const now=Date.now();
+ if(now-s.wheel<86400000)return toast("Das Glücksrad ist erst morgen wieder verfügbar!");
+ s.wheel=now;
+ const prizes=[
+  {name:"1.000 Geld",money:1000},
+  {name:"5.000 Geld",money:5000},
+  {name:"20.000 Geld",money:20000},
+  {name:"2 Diamanten",gems:2},
+  {name:"50.000 Geld",money:50000},
+  {name:"10 Diamanten",gems:10}
+ ];
+ const p=prizes[Math.floor(Math.random()*prizes.length)];
+ if(p.money)addMoney(p.money);
+ if(p.gems)s.gems+=p.gems;
+ $("wheelResult").textContent="🎉 Gewonnen: "+p.name;
+ toast("Glückwunsch! "+p.name);
+ update();
+}
+function editName() {
+ const name=prompt("Dein Spielername:",s.name);
+ if(name&&name.trim())s.name=name.trim().slice(0,20);
+ update();
+}
+function renderRanking() {
+ const players=[
+  {name:"👑 MoneyKing",score:2500000},
+  {name:"💎 RichPlayer",score:850000},
+  {name:"🚀 ClickMaster",score:320000},
+  {name:"⭐ Millionaire",score:120000}
+ ];
+ players.push({name:"🧑 "+s.name,score:Math.floor(s.total),me:true});
+ players.sort((a,b)=>b.score-a.score);
+ $("ranking").innerHTML=players.map((p,i)=>`
+ <tr style="${p.me?"color:var(--green);font-weight:bold":""}">
+ <td>${["🥇","🥈","🥉"][i]||i+1}</td>
+ <td>${p.name}</td><td>$${fmt(p.score)}</td>
+ </tr>`).join("");
+}
 function update() {
-  level = Math.floor(Math.sqrt(total / 100)) + 1;
+ s.level=Math.floor(Math.sqrt(s.total/100))+1;
+ checkAchievements();
 
-  document.getElementById("money").textContent =
-    "$" + Math.floor(money).toLocaleString("de-DE");
-  document.getElementById("power").textContent =
-    Math.floor(power * multiplier);
-  document.getElementById("auto").textContent =
-    Math.floor(auto * multiplier);
-  document.getElementById("level").textContent = level;
-  document.getElementById("rebirth").textContent = rebirth;
+ $("money").textContent="$"+fmt(s.money);
+ $("level").textContent=s.level;
+ $("perClick").textContent=fmt(clickValue());
+ $("perSecond").textContent=fmt(autoValue());
+ $("prestige").textContent=s.prestige;
+ $("gems").textContent=fmt(s.gems);
+ $("multiplier").textContent="x"+totalMultiplier().toFixed(2);
+ $("levelText").textContent="Level "+s.level;
 
-  document.getElementById("upgrades").innerHTML =
-    upgrades.map((u,i) => `
-      <div class="upgrade">
-        <b>${u.name}</b><br>
-        <small>Gekauft: ${bought[i]}</small><br>
-        <button onclick="buy(${i})">
-          Kaufen – $${costs[i].toLocaleString("de-DE")}
-        </button>
-      </div>
-    `).join("");
+ const previous=Math.pow(s.level-1,2)*100;
+ const next=Math.pow(s.level,2)*100;
+ const pct=(s.total-previous)/(next-previous)*100;
+ $("levelBar").style.width=Math.min(100,pct)+"%";
+ $("levelProgress").textContent=fmt(s.total-previous)+" / "+fmt(next-previous)+" bis Level "+(s.level+1);
 
-  updateRanking();
+ $("bonusInfo").textContent=
+ "Welt: x"+worldBonus()+" · Prestige: x"+(1+s.prestige*0.5)+
+ " · Pet: +"+(petBonus()*100)+"% · Upgrade-Multiplikator: x"+s.mult;
+
+ $("dailyButton").disabled=Date.now()-s.daily<86400000;
+ $("dailyInfo").textContent=$("dailyButton").disabled?"Belohnung bereits abgeholt.":"Deine Belohnung wartet!";
+ $("wheelButton").disabled=Date.now()-s.wheel<86400000;
+
+ renderUpgrades();
+ renderPets();
+ renderWorlds();
+ renderQuests();
+ renderRanking();
+ save();
 }
 
-function updateRanking() {
-  let players = [
-    {name:"👑 MoneyKing",score:2500000},
-    {name:"💎 RichPlayer",score:850000},
-    {name:"🚀 ClickMaster",score:320000},
-    {name:"⭐ Millionaire",score:120000}
-  ];
+$("nav").addEventListener("click",e=>{
+ const btn=e.target.closest("button[data-page]");
+ if(!btn)return;
+ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ btn.classList.add("active");
+ $(btn.dataset.page).classList.add("active");
+});
 
-  players.push({name:"🧑 Du",score:Math.floor(total)});
-
-  players.sort((a,b) => b.score-a.score);
-
-  document.getElementById("ranking").innerHTML =
-    players.map((p,i) => `
-      <tr style="${p.name.includes('Du')?'color:#4cff9b;font-weight:bold':''}">
-        <td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td>
-        <td>${p.name}</td>
-        <td>$${p.score.toLocaleString("de-DE")}</td>
-      </tr>
-    `).join("");
-}
-
-setInterval(() => {
-  let amount = auto * multiplier;
-  money += amount;
-  total += amount;
-  update();
+setInterval(()=>{
+ const amount=autoValue();
+ if(amount>0)addMoney(amount);
+ update();
 },1000);
 
 update();
 </script>
 </body>
 </html>
+
 
 
 
