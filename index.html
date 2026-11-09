@@ -3,412 +3,222 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>💰 Money Empire</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money Clicker</title>
 <style>
-:root {
-  --bg:#101a30;
-  --panel:#1c2b48;
-  --gold:#ffc83d;
-  --green:#39dc91;
-  --text:#f5f7ff;
-}
-* {box-sizing:border-box}
+* { box-sizing:border-box; }
 body {
   margin:0;
+  background:linear-gradient(135deg,#101827,#172b40);
+  color:white;
   font-family:Arial,sans-serif;
-  color:var(--text);
-  background:radial-gradient(circle at top,#29466d,#101a30 65%);
-  min-height:100vh;
-}
-header {
-  padding:22px 12px;
   text-align:center;
-  background:#111e35;
-  border-bottom:2px solid #344c6b;
+  padding:20px;
 }
-header h1 {margin:0;color:var(--gold);font-size:30px}
-header p {color:#b7c9e5;margin-bottom:0}
-main {max-width:950px;margin:auto;padding:15px}
+h1 { color:#ffd700; }
 .panel {
-  background:var(--panel);
-  border:1px solid #405779;
+  max-width:600px;
+  margin:15px auto;
+  padding:20px;
+  background:#203449;
   border-radius:18px;
-  padding:18px;
-  margin:14px 0;
-  box-shadow:0 8px 25px #0003;
+  box-shadow:0 5px 20px #0005;
 }
-.balance {
-  text-align:center;
-  font-size:42px;
-  color:var(--gold);
+.money {
+  color:#4cff9b;
+  font-size:38px;
   font-weight:bold;
-  margin:15px 0;
-  overflow-wrap:anywhere;
 }
-.stats {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:9px;
-}
-.stat {
-  background:#101d34;
-  padding:12px 5px;
-  border-radius:12px;
-  text-align:center;
-  font-size:13px;
-}
-.stat strong {display:block;font-size:20px;color:var(--green);margin-top:6px}
 button {
   border:0;
   border-radius:12px;
-  padding:13px;
-  font-weight:bold;
-  font-size:14px;
+  padding:13px 18px;
+  margin:6px;
   cursor:pointer;
-  transition:.15s;
+  font-weight:bold;
+  background:#ffc928;
+  color:#202020;
 }
-button:active {transform:scale(.96)}
-button:disabled {opacity:.4;cursor:not-allowed}
-.click {
-  display:block;
-  width:min(100%,340px);
-  margin:20px auto;
-  padding:28px;
-  font-size:25px;
-  color:#382500;
-  background:linear-gradient(135deg,#ffe77d,#ffb51d);
-  box-shadow:0 7px 0 #a96b08;
+button:hover { transform:scale(1.04); }
+#click {
+  font-size:24px;
+  padding:25px 45px;
+  background:#24d878;
 }
-.tabs {
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  justify-content:center;
-}
-.tabs button {background:#334969;color:white}
-.tabs button.active {background:var(--gold);color:#302000}
-.item {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  background:#14223a;
-  padding:13px;
-  margin:9px 0;
+.upgrade {
+  background:#304d66;
   border-radius:12px;
+  padding:12px;
+  margin:10px 0;
 }
-.item small {display:block;color:#b9c9df;margin-top:5px}
-.buy {background:var(--green);color:#082e20;min-width:100px}
-.gold {color:var(--gold)}
-.pet {font-size:26px}
-.hidden {display:none}
-#effects {
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-  z-index:5;
+.upgrade button { background:#45d99a; }
+table {
+  width:100%;
+  border-collapse:collapse;
 }
-.coin {
-  position:absolute;
-  font-size:25px;
-  animation:fly .9s ease-out forwards;
+td,th {
+  padding:10px;
+  border-bottom:1px solid #ffffff30;
 }
-@keyframes fly {
-  0% {opacity:1;transform:translateY(0) scale(.7)}
-  100% {opacity:0;transform:translateY(-110px) scale(1.5)}
-}
-footer {text-align:center;color:#8da3c3;padding:20px}
+small { color:#b9c8d8; }
 </style>
 </head>
 <body>
-<header>
-<h1>💰 MONEY EMPIRE</h1>
-<p>Baue dein eigenes Geld-Imperium!</p>
-</header>
 
-<div id="effects"></div>
+<h1>💰 MONEY CLICKER</h1>
 
-<main>
-<section class="panel">
-<h2 style="text-align:center">🏦 Dein Konto</h2>
-<div class="balance" id="money">0 €</div>
-<div class="stats">
-<div class="stat">Pro Klick<strong id="clickStat">1 €</strong></div>
-<div class="stat">Pro Sekunde<strong id="autoStat">0 €</strong></div>
-<div class="stat">Prestige<strong id="prestigeStat">x1</strong></div>
+<div class="panel">
+  <div class="money" id="money">$0</div>
+  <p>Level: <span id="level">1</span></p>
+  <p>Geld pro Klick: <span id="power">1</span></p>
+  <p>Auto-Geld pro Sekunde: <span id="auto">0</span></p>
+  <button id="click" onclick="earn()">💵 GELD KLICKEN</button>
 </div>
-<button class="click" id="clickButton">💵 GELD KLICKEN!</button>
-<p id="message" style="text-align:center;color:#aeeac9">Werde zum Millionär!</p>
-</section>
 
-<section class="panel">
-<div class="tabs">
-<button class="active" data-tab="shop">🛒 Shop</button>
-<button data-tab="pets">🐶 Haustiere</button>
-<button data-tab="prestige">⭐ Prestige</button>
-<button data-tab="ranking">🏆 Rangliste</button>
+<div class="panel">
+  <h2>🚀 UPGRADES</h2>
+  <div id="upgrades"></div>
 </div>
-</section>
 
-<section class="panel" id="shop">
-<h2>🛒 Upgrade-Shop</h2>
-<div id="shopItems"></div>
-</section>
+<div class="panel">
+  <h2>🏆 RANGLISTE</h2>
+  <table>
+    <thead><tr><th>Platz</th><th>Spieler</th><th>Vermögen</th></tr></thead>
+    <tbody id="ranking"></tbody>
+  </table>
+  <small>Lokale Demo-Rangliste – noch nicht global.</small>
+</div>
 
-<section class="panel hidden" id="pets">
-<h2>🐶 Deine Haustiere</h2>
-<p>Haustiere erhöhen deinen gesamten Verdienst!</p>
-<div id="petItems"></div>
-</section>
-
-<section class="panel hidden" id="prestige">
-<h2>⭐ Prestige-System</h2>
-<p>Setze deinen Fortschritt zurück und erhalte dauerhafte Geld-Boni.</p>
-<p>Dein Prestige-Bonus: <strong class="gold" id="prestigeBonus">x1</strong></p>
-<p>Für einen Prestige-Aufstieg brauchst du 100.000 € insgesamt verdientes Geld.</p>
-<button class="buy" id="prestigeButton">⭐ Prestige freischalten</button>
-<p id="prestigeMessage"></p>
-</section>
-
-<section class="panel hidden" id="ranking">
-<h2>🏆 Deine Bestleistungen</h2>
-<p>Lokale Rangliste auf diesem Gerät:</p>
-<div id="rankingList"></div>
-</section>
-</main>
-
-<footer>💰 Money Empire – Dein Weg zum Reichtum!</footer>
+<div class="panel">
+  <h2>🌟 REBIRTH</h2>
+  <p>Starte neu und erhalte einen permanenten Multiplikator!</p>
+  <p>Rebirth: <span id="rebirth">0</span></p>
+  <button onclick="doRebirth()">REBIRTH (1 Million)</button>
+</div>
 
 <script>
-const $ = id => document.getElementById(id);
+let money = 0;
+let total = 0;
+let power = 1;
+let auto = 0;
+let level = 1;
+let rebirth = 0;
+let multiplier = 1;
 
-const defaults = {
- money:0,
- total:0,
- perClick:1,
- auto:0,
- clickLevel:0,
- upgrades:{},
- pets:{},
- prestige:0,
- best:0
-};
-
-let game;
-try {
- game={...defaults,...JSON.parse(localStorage.getItem("moneyEmpire")||"{}")};
- game.upgrades ||= {};
- game.pets ||= {};
-} catch(e) {
- game={...defaults,upgrades:{},pets:{}};
-}
-
-const upgrades=[
- {id:"mouse",name:"🖱️ Goldene Maus",desc:"+2 € pro Klick",base:30,click:2,auto:0},
- {id:"office",name:"🏢 Büro",desc:"+5 € pro Sekunde",base:100,click:0,auto:5},
- {id:"bank",name:"🏦 Bank",desc:"+25 € pro Sekunde",base:500,click:0,auto:25},
- {id:"factory",name:"🏭 Fabrik",desc:"+100 € pro Sekunde",base:2500,click:0,auto:100},
- {id:"tower",name:"🏙️ Wolkenkratzer",desc:"+500 € pro Sekunde",base:10000,click:0,auto:500},
- {id:"rocket",name:"🚀 Geld-Rakete",desc:"+2500 € pro Sekunde",base:50000,click:0,auto:2500},
- {id:"goldmine",name:"⛏️ Goldmine",desc:"+10000 € pro Sekunde",base:200000,click:0,auto:10000}
+const upgrades = [
+  {name:"🥉 Bronze-Klicker", cost:25, type:"power", value:1},
+  {name:"🥈 Silber-Klicker", cost:150, type:"power", value:5},
+  {name:"🥇 Gold-Klicker", cost:800, type:"power", value:20},
+  {name:"💎 Diamant-Klicker", cost:5000, type:"power", value:100},
+  {name:"🤖 Auto-Klicker", cost:100, type:"auto", value:1},
+  {name:"⚙️ Mega-Auto-Klicker", cost:1500, type:"auto", value:10},
+  {name:"🏭 Geld-Fabrik", cost:10000, type:"auto", value:75},
+  {name:"🚀 Super-Fabrik", cost:100000, type:"auto", value:500},
+  {name:"👑 Klick-Multiplikator", cost:2500, type:"mult", value:2},
+  {name:"🌌 Ultra-Multiplikator", cost:25000, type:"mult", value:3}
 ];
 
-const pets=[
- {id:"dog",name:"🐶 Hund",desc:"+5 % Verdienst",cost:500,bonus:.05},
- {id:"cat",name:"🐱 Katze",desc:"+10 % Verdienst",cost:2000,bonus:.10},
- {id:"dragon",name:"🐉 Drache",desc:"+25 % Verdienst",cost:10000,bonus:.25},
- {id:"unicorn",name:"🦄 Einhorn",desc:"+50 % Verdienst",cost:50000,bonus:.50},
- {id:"phoenix",name:"🔥 Phönix",desc:"+100 % Verdienst",cost:200000,bonus:1}
-];
+let costs = upgrades.map(u => u.cost);
+let bought = upgrades.map(() => 0);
 
-function multiplier(){
- let result=1+game.prestige*.5;
- for(const pet of pets){
-  if(game.pets[pet.id]) result+=pet.bonus;
- }
- return result;
-}
-
-function fmt(n){
- if(n>=1e12)return (n/1e12).toFixed(2)+" Bio.";
- if(n>=1e9)return (n/1e9).toFixed(2)+" Mrd.";
- if(n>=1e6)return (n/1e6).toFixed(2)+" Mio.";
- return Math.floor(n).toLocaleString("de-DE")+" €";
-}
-
-function save(){
- try{
-  localStorage.setItem("moneyEmpire",JSON.stringify(game));
- }catch(e){}
-}
-
-let audio;
-function sound(freq=600){
- try{
-  audio ||= new (window.AudioContext||window.webkitAudioContext)();
-  if(audio.state==="suspended")audio.resume();
-  const osc=audio.createOscillator();
-  const gain=audio.createGain();
-  osc.connect(gain);gain.connect(audio.destination);
-  osc.frequency.value=freq;
-  gain.gain.setValueAtTime(.07,audio.currentTime);
-  gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.13);
-  osc.start();osc.stop(audio.currentTime+.13);
- }catch(e){}
-}
-
-function effect(){
- const el=document.createElement("div");
- el.className="coin";
- el.textContent="💰";
- el.style.left=(15+Math.random()*70)+"%";
- el.style.top=(35+Math.random()*40)+"%";
- $("effects").appendChild(el);
- setTimeout(()=>el.remove(),950);
-}
-
-function earn(){
- const amount=game.perClick*multiplier();
- game.money+=amount;
- game.total+=amount;
- game.best=Math.max(game.best,game.total);
- sound(700);
- effect();
- $("message").textContent="+"+fmt(amount)+" verdient! 🎉";
- update();
-}
-
-function buyUpgrade(id){
- const u=upgrades.find(x=>x.id===id);
- const level=game.upgrades[id]||0;
- const cost=Math.floor(u.base*Math.pow(1.55,level));
- if(game.money<cost)return;
- game.money-=cost;
- game.upgrades[id]=level+1;
- game.perClick+=u.click;
- game.auto+=u.auto;
- sound(850);
- update();
-}
-
-function buyPet(id){
- const p=pets.find(x=>x.id===id);
- if(game.pets[id]||game.money<p.cost)return;
- game.money-=p.cost;
- game.pets[id]=true;
- sound(1000);
- update();
-}
-
-function doPrestige(){
- if(game.total<100000){
-  $("prestigeMessage").textContent="Noch nicht genug verdient!";
-  return;
- }
- if(!confirm("Wirklich Prestige starten? Dein normales Geld und deine Upgrades werden zurückgesetzt. Deine Haustiere und dein Prestige bleiben!"))return;
-
- game.prestige++;
- game.money=0;
- game.total=0;
- game.perClick=1;
- game.auto=0;
- game.clickLevel=0;
- game.upgrades={};
- sound(1200);
- update();
-}
-
-function renderShop(){
- $("shopItems").innerHTML="";
- for(const u of upgrades){
-  const level=game.upgrades[u.id]||0;
-  const cost=Math.floor(u.base*Math.pow(1.55,level));
-  const el=document.createElement("div");
-  el.className="item";
-  const info=document.createElement("div");
-  info.innerHTML="<strong>"+u.name+"</strong><small>"+u.desc+" | Level "+level+"</small>";
-  const btn=document.createElement("button");
-  btn.className="buy";
-  btn.textContent="Kaufen · "+fmt(cost);
-  btn.disabled=game.money<cost;
-  btn.onclick=()=>buyUpgrade(u.id);
-  el.append(info,btn);
-  $("shopItems").appendChild(el);
- }
-}
-
-function renderPets(){
- $("petItems").innerHTML="";
- for(const p of pets){
-  const owned=!!game.pets[p.id];
-  const el=document.createElement("div");
-  el.className="item";
-  const info=document.createElement("div");
-  info.innerHTML="<strong>"+p.name+"</strong><small>"+p.desc+"</small>";
-  const btn=document.createElement("button");
-  btn.className="buy";
-  btn.textContent=owned?"Besitzt du ✓":"Kaufen · "+fmt(p.cost);
-  btn.disabled=owned||game.money<p.cost;
-  btn.onclick=()=>buyPet(p.id);
-  el.append(info,btn);
-  $("petItems").appendChild(el);
- }
-}
-
-function renderRanking(){
- $("rankingList").innerHTML="";
- const scores=JSON.parse(localStorage.getItem("moneyEmpireScores")||"[]");
- const current={score:game.best,date:new Date().toLocaleDateString("de-DE")};
- const all=[...scores.filter(s=>s.score!==current.score),current]
- .sort((a,b)=>b.score-a.score).slice(0,10);
- all.forEach((s,i)=>{
-  const el=document.createElement("div");
-  el.className="item";
-  el.textContent=(i+1)+". Platz – "+fmt(s.score);
-  $("rankingList").appendChild(el);
- });
- localStorage.setItem("moneyEmpireScores",JSON.stringify(all));
-}
-
-function update(){
- $("money").textContent=fmt(game.money);
- $("clickStat").textContent=fmt(game.perClick*multiplier());
- $("autoStat").textContent=fmt(game.auto*multiplier());
- $("prestigeStat").textContent="x"+multiplier().toFixed(2);
- $("prestigeBonus").textContent="x"+(1+game.prestige*.5).toFixed(2);
- renderShop();
- renderPets();
- renderRanking();
- save();
-}
-
-$("clickButton").onclick=earn;
-$("prestigeButton").onclick=doPrestige;
-
-document.querySelectorAll("[data-tab]").forEach(btn=>{
- btn.onclick=()=>{
-  document.querySelectorAll("[data-tab]").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  ["shop","pets","prestige","ranking"].forEach(id=>{
-   $(id).classList.toggle("hidden",id!==btn.dataset.tab);
-  });
- };
-});
-
-setInterval(()=>{
- const amount=game.auto*multiplier();
- if(amount>0){
-  game.money+=amount;
-  game.total+=amount;
-  game.best=Math.max(game.best,game.total);
+function earn() {
+  let amount = power * multiplier;
+  money += amount;
+  total += amount;
   update();
- }
+}
+
+function buy(i) {
+  let u = upgrades[i];
+  if(money < costs[i]) return;
+
+  money -= costs[i];
+  bought[i]++;
+
+  if(u.type === "power") power += u.value;
+  if(u.type === "auto") auto += u.value;
+  if(u.type === "mult") multiplier *= u.value;
+
+  costs[i] = Math.floor(costs[i] * 1.6);
+  update();
+}
+
+function doRebirth() {
+  if(money < 1000000) {
+    alert("Du brauchst 1 Million Dollar!");
+    return;
+  }
+
+  money = 0;
+  power = 1;
+  auto = 0;
+  multiplier = 1;
+  bought = upgrades.map(() => 0);
+  costs = upgrades.map(u => u.cost);
+  rebirth++;
+  multiplier = 1 + rebirth;
+  update();
+}
+
+function update() {
+  level = Math.floor(Math.sqrt(total / 100)) + 1;
+
+  document.getElementById("money").textContent =
+    "$" + Math.floor(money).toLocaleString("de-DE");
+  document.getElementById("power").textContent =
+    Math.floor(power * multiplier);
+  document.getElementById("auto").textContent =
+    Math.floor(auto * multiplier);
+  document.getElementById("level").textContent = level;
+  document.getElementById("rebirth").textContent = rebirth;
+
+  document.getElementById("upgrades").innerHTML =
+    upgrades.map((u,i) => `
+      <div class="upgrade">
+        <b>${u.name}</b><br>
+        <small>Gekauft: ${bought[i]}</small><br>
+        <button onclick="buy(${i})">
+          Kaufen – $${costs[i].toLocaleString("de-DE")}
+        </button>
+      </div>
+    `).join("");
+
+  updateRanking();
+}
+
+function updateRanking() {
+  let players = [
+    {name:"👑 MoneyKing",score:2500000},
+    {name:"💎 RichPlayer",score:850000},
+    {name:"🚀 ClickMaster",score:320000},
+    {name:"⭐ Millionaire",score:120000}
+  ];
+
+  players.push({name:"🧑 Du",score:Math.floor(total)});
+
+  players.sort((a,b) => b.score-a.score);
+
+  document.getElementById("ranking").innerHTML =
+    players.map((p,i) => `
+      <tr style="${p.name.includes('Du')?'color:#4cff9b;font-weight:bold':''}">
+        <td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td>
+        <td>${p.name}</td>
+        <td>$${p.score.toLocaleString("de-DE")}</td>
+      </tr>
+    `).join("");
+}
+
+setInterval(() => {
+  let amount = auto * multiplier;
+  money += amount;
+  total += amount;
+  update();
 },1000);
 
 update();
 </script>
 </body>
 </html>
+
+
 
