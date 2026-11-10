@@ -257,7 +257,7 @@ footer {
       <button onclick="hatch(5,'gold')">Ei öffnen</button>
     </div>
   </div>
-  <h3 style="color:#ffdc70;text-align:center">Deine Haustiere</h3>
+  <h3 style="color:#ffdc70;text-align:center">Deine Haustiere (0/10)</h3>
   <div id="pets" class="grid"></div>
   <p id="petBonus" style="text-align:center"></p>
 </div>
@@ -432,6 +432,9 @@ function buyDiamond() {
 }
 
 function hatch(price,type) {
+  if(s.pets.length >= 10)
+    return msg("Du kannst maximal 10 Haustiere besitzen!");
+
   if(type === "normal" && s.money < price)
     return msg("Nicht genug Geld!");
   if(type === "gold" && s.diamonds < price)
@@ -541,6 +544,8 @@ function update() {
   document.getElementById("total").textContent = fmt(s.total);
   document.getElementById("clicks").textContent = fmt(s.clicks);
   document.getElementById("worldCount").textContent = s.worlds.length;
+  document.querySelector("#pets").previousElementSibling.textContent =
+    "Deine Haustiere ("+s.pets.length+"/10)";
   document.getElementById("petBonus").textContent =
     "🐾 Deine Haustiere geben dir insgesamt "+fmt(petPower())+" Bonus pro Klick.";
 
